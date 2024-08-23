@@ -1,8 +1,11 @@
 import 'package:diary_sysman/ui/diary/widgets/diary_card.dart';
+import 'package:diary_sysman/ui/entry/cubit/entry_cubit.dart';
+import 'package:diary_sysman/ui/entry/screens/entry_screen.dart';
 import 'package:diary_sysman/ui/styles.dart';
 import 'package:diary_sysman/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DiaryScreen extends StatefulWidget {
   const DiaryScreen({super.key});
@@ -33,7 +36,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       body: SafeArea(
         bottom: false,
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: getAvailableHeight(0.038)),
+          margin: EdgeInsets.symmetric(horizontal: getAvailableWidth(0.038)),
           child: Column(
             children: [
               SizedBox(
@@ -96,7 +99,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: null,
+        onPressed: (){
+          context.read<EntryCubit>().setDateTime(DateTime.now());
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const EntryScreen()),
+          );
+        },
         elevation: 10,
         child: Icon(Icons.add,
           size: 30,

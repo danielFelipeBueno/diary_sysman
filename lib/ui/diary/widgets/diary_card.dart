@@ -1,4 +1,7 @@
 
+// ignore_for_file: avoid_renaming_method_parameters
+
+import 'package:diary_sysman/ui/diary/screens/photo_carousel_modal.dart';
 import 'package:diary_sysman/ui/styles.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +17,7 @@ class DiaryCard extends StatelessWidget {
   final String weekDay, date, title, info;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext ctx) {
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       width: double.infinity,
@@ -38,20 +41,28 @@ class DiaryCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.all(Radius.circular(13))
+          InkWell(
+            onTap: ()=>showModalBottomSheet(
+              backgroundColor: Colors.white,
+              context: ctx,
+              isScrollControlled: true,
+              builder:(_)=>const PhotoCarouselModal()
             ),
-            height: 182,
-            child: const FadeInImage(
-              placeholder: AssetImage('assets/placeholder.png'),  // Imagen de placeholder
-              image: AssetImage('assets/placeholder.png'), // URL de la imagen a cargar
-              fadeInDuration: Duration(milliseconds: 500),
-              height: 300,
-              width: 300,
-              fit: BoxFit.fitWidth,
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(13))
+              ),
+              clipBehavior: Clip.antiAlias, 
+              height: 182,
+              child: const FadeInImage(
+                placeholder: AssetImage('assets/placeholder.png'),  // Imagen de placeholder
+                image: AssetImage('assets/placeholder.png'), // URL de la imagen a cargar
+                fadeInDuration: Duration(milliseconds: 500),
+                height: 300,
+                width: 300,
+                fit: BoxFit.fitWidth,
+              ),
             ),
           ),
           const Spacer(),

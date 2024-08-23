@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 
+//% CURRENT THEME
+
+bool isDarkMode(BuildContext ctx){
+  final Brightness brightness = Theme.of(ctx).brightness;
+  return brightness == Brightness.dark;
+}
+
 //% COLORS
 
 var kPrimaryColor =  const Color(0xff5856D6);
 var kSecondaryColor =  const Color(0xffE6E5F9);
+var kSecondaryDarkColor = const Color(0xff27253B);
 
 //% Text Style
 

@@ -59,13 +59,17 @@ class _PhotoCarouselModalState extends State<PhotoCarouselModal> {
               children: [
                 IconButton(
                   onPressed: ()=>Navigator.pop(ctx),
-                  icon: const Icon(CupertinoIcons.clear, size: 36,)
+                  icon: Icon(CupertinoIcons.clear, 
+                    size: 36,
+                    color: isDarkMode(ctx)?Colors.white:null
+                  )
                 ),
                 IconButton(
-                  onPressed: (){
-                    showDeleteConfirmationDialog(ctx,widget.entry,true);
-                  },
-                  icon: const Icon(CupertinoIcons.trash, size: 36,)
+                  onPressed: ()=>showDeleteConfirmationDialog(ctx,widget.entry,true),
+                  icon: Icon(CupertinoIcons.trash, 
+                    size: 36,
+                    color: isDarkMode(ctx)?Colors.white:null
+                  )
                 )
               ],
             ),
@@ -110,7 +114,7 @@ class _PhotoCarouselModalState extends State<PhotoCarouselModal> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CupertinoPageControl(
-              brightness: Brightness.light,
+              brightness: isDarkMode(ctx)?Brightness.dark:Brightness.light,
               isSelect: true,
               length: widget.entry.images.length,
               timer: Timer(const Duration(milliseconds: 500),(){}),

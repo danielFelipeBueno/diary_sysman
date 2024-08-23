@@ -5,6 +5,7 @@ import 'package:diary_sysman/ui/diary/cubit/diary_cubit.dart';
 import 'package:diary_sysman/ui/entry/cubit/entry_cubit.dart';
 import 'package:diary_sysman/ui/splash/splash_screen.dart';
 import 'package:diary_sysman/ui/styles.dart';
+import 'package:diary_sysman/utils/custom_theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -16,8 +17,22 @@ void main()async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  bool _isDarkMode = false;
+
+  void _toggleTheme() {
+    setState(() {
+      _isDarkMode = !_isDarkMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +48,8 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Diary Sysman',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: kPrimaryColor),
-            useMaterial3: true,
-          ),
-          home: const SplashScreen()
+          theme: _isDarkMode ? darkTheme : lightTheme,
+          home:  SplashScreen(onThemeToggle:_toggleTheme)
         ),
       ),
     );

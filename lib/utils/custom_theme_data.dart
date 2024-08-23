@@ -1,5 +1,6 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
-import 'package:diary_sysman/ui/styles.dart';
 
 // Define colores para el tema claro
 final lightThemeColors = {
@@ -33,10 +34,6 @@ final lightTheme = ThemeData(
   ),
   scaffoldBackgroundColor: lightThemeColors['background'],
   cardColor: lightThemeColors['card'],
-  textTheme: TextTheme(
-    // bodyText1: TextStyle(color: lightThemeColors['primaryText']),
-    // bodyText2: TextStyle(color: lightThemeColors['secondaryText']),
-  ),
   appBarTheme: AppBarTheme(
     backgroundColor: lightThemeColors['background'],
     foregroundColor: lightThemeColors['primaryText'],
@@ -59,10 +56,6 @@ final darkTheme = ThemeData(
   ),
   scaffoldBackgroundColor: darkThemeColors['background'],
   cardColor: darkThemeColors['card'],
-  textTheme: TextTheme(
-    // bodyText1: TextStyle(color: darkThemeColors['primaryText']),
-    // bodyText2: TextStyle(color: darkThemeColors['secondaryText']),
-  ),
   appBarTheme: AppBarTheme(
     backgroundColor: darkThemeColors['background'],
     foregroundColor: darkThemeColors['primaryText'],

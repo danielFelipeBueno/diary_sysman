@@ -10,7 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DiaryScreen extends StatefulWidget {
-  const DiaryScreen({super.key});
+  const DiaryScreen({
+    required this.onThemeToggle,
+    super.key
+  });
+
+  final VoidCallback onThemeToggle;
 
   @override
   State<DiaryScreen> createState() => _DiaryScreenState();
@@ -37,7 +42,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     return BlocBuilder<DiaryCubit, DiaryState>(
       builder: (ctx, state) {
         return Scaffold(
-          backgroundColor: const Color(0xffF8F5F4),
+          // backgroundColor: const Color(0xffF8F5F4),
           body: SafeArea(
             bottom: false,
             child: Container(
@@ -56,8 +61,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         Align(
                           alignment: Alignment.bottomRight,
                           child: IconButton.filledTonal(
-                            icon: const Icon(CupertinoIcons.moon),
-                            onPressed: () {},
+                            icon: Icon(
+                              isDarkMode(ctx)
+                              ?CupertinoIcons.sun_min
+                              :CupertinoIcons.moon,
+                              color: isDarkMode(ctx)?Colors.white:null,
+                            ),
+                            onPressed: widget.onThemeToggle,
                           )
                         ),
                       ],
@@ -68,7 +78,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
                     height: getAvailableHeight(0.044),
                     child: CupertinoSearchTextField(
                       controller: textController,
-                      placeholder: 'Buscar',
+                      placeholder: 'Buscar por título o descripción',
+                      style: isDarkMode(ctx)?const TextStyle(color: Colors.white):null,
                       onChanged: (searchTerm){
                         if(searchTerm.isNotEmpty){
                           ctx.read<DiaryCubit>().searchEntry(searchTerm);
@@ -118,18 +129,22 @@ class _DiaryScreenState extends State<DiaryScreen> {
               ),
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.white,
-            onPressed: (){
-              ctx.read<EntryCubit>().setDateTime(DateTime.now());
-              Navigator.of(ctx).push(
-                MaterialPageRoute(builder: (_) => const EntryScreen()),
-              );
-            },
-            elevation: 10,
-            child: Icon(Icons.add,
-              size: 30,
-              color: kPrimaryColor
+          floatingActionButton: SizedBox(
+            width: 70, // Ajusta el ancho según sea necesario
+            height: 70,
+            child: FloatingActionButton(
+              backgroundColor:isDarkMode(ctx)?kPrimaryColor:Colors.white,
+              onPressed: (){
+                ctx.read<EntryCubit>().setDateTime(DateTime.now());
+                Navigator.of(ctx).push(
+                  MaterialPageRoute(builder: (_) => const EntryScreen()),
+                );
+              },
+              elevation: 10,
+              child: Icon(Icons.add,
+                size: 36,
+                color: isDarkMode(ctx)?Colors.white:kPrimaryColor
+              ),
             ),
           ),
         );

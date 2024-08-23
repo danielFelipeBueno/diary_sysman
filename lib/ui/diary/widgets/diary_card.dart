@@ -45,9 +45,9 @@ class DiaryCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
         height: entry.images.isEmpty?262:351,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(12))
+        decoration:  BoxDecoration(
+          color: Theme.of(ctx).cardColor,
+          borderRadius: const BorderRadius.all(Radius.circular(12))
         ),
         child: Column(
           children: [
@@ -56,7 +56,9 @@ class DiaryCard extends StatelessWidget {
               child: Row(
                 children: [
                   const SizedBox(width: 8),
-                  Text(weekDay(entry.date),style: h2Style),
+                  Text(weekDay(entry.date),
+                    style: h2Style.copyWith(color: isDarkMode(ctx)?Colors.white:null)
+                  ),
                   const Spacer(),
                   Text(formattedDate(entry.date),style: h4Style)
                 ],
@@ -67,7 +69,6 @@ class DiaryCard extends StatelessWidget {
             ?Image.asset('assets/icons/icon_ia.PNG', height: 60,)
             :InkWell(
               onTap: ()=>showModalBottomSheet(
-                backgroundColor: Colors.white,
                 context: ctx,
                 isScrollControlled: true,
                 builder:(_)=>PhotoCarouselModal(entry: entry)
@@ -94,7 +95,11 @@ class DiaryCard extends StatelessWidget {
               height: 22,
               child: Align(
                 alignment: Alignment.bottomLeft,
-                child: Text(entry.title,style: h3StyleSemiBold, maxLines: 1,overflow: TextOverflow.ellipsis)
+                child: Text(entry.title,
+                  style: h3StyleSemiBold.copyWith(color: isDarkMode(ctx)?Colors.white:null),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis
+                )
               ),
             ),
             SizedBox(

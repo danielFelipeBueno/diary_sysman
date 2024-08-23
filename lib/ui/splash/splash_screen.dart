@@ -4,7 +4,12 @@ import 'package:diary_sysman/utils/size_config.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({
+    required this.onThemeToggle,
+    super.key
+  });
+
+  final VoidCallback onThemeToggle;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -17,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 2),(){
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const DiaryScreen()
+          builder: (_) => DiaryScreen(onThemeToggle: widget.onThemeToggle,)
         ),
       );
     });

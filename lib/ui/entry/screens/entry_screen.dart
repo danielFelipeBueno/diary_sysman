@@ -42,10 +42,8 @@ class _EntryScreenState extends State<EntryScreen> {
       builder: (ctx, state) {
         var edgeInsets = EdgeInsets.symmetric(horizontal: getAvailableWidth(0.061));
         return Scaffold(
-          backgroundColor: Colors.white,
           appBar: AppBar(
             automaticallyImplyLeading: false,
-            backgroundColor: Colors.white,
             elevation: 0,
             flexibleSpace: SafeArea(
               child: Container(
@@ -59,16 +57,20 @@ class _EntryScreenState extends State<EntryScreen> {
                           width: 52,
                           child: IconButton(
                             onPressed: ()=>Navigator.pop(ctx),
-                            icon: const Icon(CupertinoIcons.clear, size: 36,)
+                            icon: Icon(CupertinoIcons.clear, 
+                              size: 36,
+                              color: isDarkMode(ctx)?Colors.white:null,
+                            )
                           ),
                         ),
                         if(state.finishedTitle&&state.descriptionController.text.isNotEmpty)
                         CupertinoButton(
-                          child: const Text('Terminar'),
+                          child: Text('Terminar',style: isDarkMode(ctx)
+                            ?TextStyle(color: kPrimaryColor, fontWeight: FontWeight.w600):null,
+                          ),
                           onPressed: ()async{
-                            int result = await ctx.read<EntryCubit>().createEntry();
+                            await ctx.read<EntryCubit>().createEntry();
                             ctx.read<DiaryCubit>().readAllEntries();
-                            print('================== RESULT: $result ==================');
                             Navigator.pop(ctx);
                           }
                         )
@@ -120,9 +122,9 @@ class _EntryScreenState extends State<EntryScreen> {
                     controller: state.titleController,
                     textAlign: TextAlign.center,
                     textInputAction: TextInputAction.done,
-                    style: h1HintStyle.copyWith(color: Colors.black),
+                    style: h1HintStyle.copyWith(color: isDarkMode(ctx)?Colors.white:Colors.black),
                     decoration: InputDecoration(
-                      hintText: 'Escribe tu título',
+                      hintText: 'Escribe un título',
                       hintStyle: h1HintStyle,
                       border: InputBorder.none, 
                     ),
@@ -172,7 +174,7 @@ class _EntryScreenState extends State<EntryScreen> {
                     height: getAvailableHeight(0.058),
                     decoration: BoxDecoration(
                       borderRadius: borderRadius12,
-                      color: kSecondaryColor
+                      color: isDarkMode(ctx)?kSecondaryDarkColor:kSecondaryColor
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -197,7 +199,7 @@ class _EntryScreenState extends State<EntryScreen> {
                     keyboardType: TextInputType.multiline,
                     controller: state.descriptionController,
                     textInputAction: TextInputAction.done,
-                    style: h5HintStyle.copyWith(color: Colors.black),
+                    style: h5HintStyle.copyWith(color: isDarkMode(ctx)?Colors.white:Colors.black),
                     decoration: InputDecoration(
                       hintText: 'Empieza a escribir...',
                       hintStyle: h5HintStyle,

@@ -40,6 +40,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   cupertino_page_controller: ^0.0.2
   image_picker: ^1.1.2
+  sqflite: ^2.3.3+1
 
 dev_dependencies:
   flutter_test:

@@ -5,13 +5,44 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cupertino_page_controller/srcs/cupertino_page_controller.dart';
+import 'package:diary_sysman/models/entry_model.dart';
+import 'package:diary_sysman/ui/diary/widgets/delete_entre_dialog.dart';
 import 'package:diary_sysman/ui/styles.dart';
 import 'package:diary_sysman/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class PhotoCarouselModal extends StatelessWidget {
-  const PhotoCarouselModal({super.key});
+class PhotoCarouselModal extends StatefulWidget {
+  const PhotoCarouselModal({
+    required this.entry,
+    super.key
+  });
+
+  final Entry entry;
+  
+
+  @override
+  State<PhotoCarouselModal> createState() => _PhotoCarouselModalState();
+}
+
+class _PhotoCarouselModalState extends State<PhotoCarouselModal> {
+  late PageController _pageController;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+
+    _pageController.addListener(() {
+      final page = _pageController.page;
+      if (page != null) {
+        setState(() {
+          _currentIndex = page.round();
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext ctx) {
@@ -31,7 +62,9 @@ class PhotoCarouselModal extends StatelessWidget {
                   icon: const Icon(CupertinoIcons.clear, size: 36,)
                 ),
                 IconButton(
-                  onPressed: ()=>Navigator.pop(ctx),
+                  onPressed: (){
+                    showDeleteConfirmationDialog(ctx,widget.entry,true);
+                  },
                   icon: const Icon(CupertinoIcons.trash, size: 36,)
                 )
               ],
@@ -39,57 +72,27 @@ class PhotoCarouselModal extends StatelessWidget {
           ),
           SizedBox(
             height: getAvailableHeight(0.722),
-            child: PageView(
-              children: [
-                Container(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: widget.entry.images.length,
+              itemBuilder: (ctx, i){
+                return Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    // color: Colors.red`,
-                    borderRadius: BorderRadius.all(Radius.circular(13))
+                    borderRadius: BorderRadius.all(Radius.circular(28))
                   ),
+                  clipBehavior: Clip.antiAlias, 
                   height: getAvailableHeight(0.722),
-                  child: const FadeInImage(
-                    placeholder: AssetImage('assets/placeholder.png'),  // Imagen de placeholder
-                    image: AssetImage('assets/placeholder.png'), // URL de la imagen a cargar
-                    fadeInDuration: Duration(milliseconds: 500),
+                  child: FadeInImage(
+                    placeholder: const AssetImage('assets/placeholder.png'),
+                    image: MemoryImage(widget.entry.images[i].image),
+                    fadeInDuration: const Duration(milliseconds: 500),
                     height: 300,
                     width: 300,
-                    fit: BoxFit.fitWidth,
+                    fit: BoxFit.fitHeight,
                   ),
-                ),
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    // color: Colors.red,
-                    borderRadius: BorderRadius.all(Radius.circular(13))
-                  ),
-                  height: getAvailableHeight(0.722),
-                  child: const FadeInImage(
-                    placeholder: AssetImage('assets/placeholder.png'),  // Imagen de placeholder
-                    image: AssetImage('assets/placeholder.png'), // URL de la imagen a cargar
-                    fadeInDuration: Duration(milliseconds: 500),
-                    height: 300,
-                    width: 300,
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    // color: Colors.red,
-                    borderRadius: BorderRadius.all(Radius.circular(13))
-                  ),
-                  height: getAvailableHeight(0.722),
-                  child: const FadeInImage(
-                    placeholder: AssetImage('assets/placeholder.png'),  // Imagen de placeholder
-                    image: AssetImage('assets/placeholder.png'), // URL de la imagen a cargar
-                    fadeInDuration: Duration(milliseconds: 500),
-                    height: 300,
-                    width: 300,
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-              ],
+                );
+              },
             ),
           ),
           SizedBox(
@@ -109,9 +112,9 @@ class PhotoCarouselModal extends StatelessWidget {
             child: CupertinoPageControl(
               brightness: Brightness.light,
               isSelect: true,
-              length: 3,
+              length: widget.entry.images.length,
               timer: Timer(const Duration(milliseconds: 500),(){}),
-              current: 1,
+              current: _currentIndex,
             ),
           ),
         ],

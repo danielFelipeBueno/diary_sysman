@@ -1,3 +1,5 @@
+import 'package:diary_sysman/models/entry_model.dart';
+import 'package:diary_sysman/ui/diary/cubit/diary_cubit.dart';
 import 'package:diary_sysman/ui/diary/widgets/diary_card.dart';
 import 'package:diary_sysman/ui/entry/cubit/entry_cubit.dart';
 import 'package:diary_sysman/ui/entry/screens/entry_screen.dart';
@@ -20,6 +22,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
    @override
   void initState() {
     super.initState();
+    context.read<DiaryCubit>().readAllEntries();
     textController = TextEditingController();
   }
 
@@ -31,86 +34,106 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xffF8F5F4),
-      body: SafeArea(
-        bottom: false,
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: getAvailableWidth(0.038)),
-          child: Column(
-            children: [
-              SizedBox(
-                height: getAvailableHeight(0.07),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text('Diario',style: h1Style)
+    return BlocBuilder<DiaryCubit, DiaryState>(
+      builder: (ctx, state) {
+        return Scaffold(
+          backgroundColor: const Color(0xffF8F5F4),
+          body: SafeArea(
+            bottom: false,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: getAvailableWidth(0.038)),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: getAvailableHeight(0.07),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Text('Diario',style: h1Style)
+                        ),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: IconButton.filledTonal(
+                            icon: const Icon(CupertinoIcons.moon),
+                            onPressed: () {},
+                          )
+                        ),
+                      ],
                     ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: IconButton.filledTonal(
-                        icon: const Icon(CupertinoIcons.moon),
-                        onPressed: () {},
-                      )
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: getAvailableHeight(0.014)),
-              SizedBox(
-                height: getAvailableHeight(0.044),
-                child: CupertinoSearchTextField(
-                  controller: textController,
-                  placeholder: 'Buscar',
-                ),
-              ),
-              SizedBox(height: getAvailableHeight(0.016)),
-              const Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      DiaryCard(
-                        weekDay: 'Domingo',
-                        date: '19 de agosto',
-                        title: 'Title',
-                        info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sed massa ut nunc vulputate posuere a ac ante. Curabitur lacus quam, convallis eget ante vulputate, dignissim sodales elit.',
-                      ),
-                      DiaryCard(
-                        weekDay: 'Domingo',
-                        date: '19 de agosto',
-                        title: 'Title',
-                        info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sed massa ut nunc vulputate posuere a ac ante. Curabitur lacus quam, convallis eget ante vulputate, dignissim sodales elit.',
-                      ),
-                      DiaryCard(
-                        weekDay: 'Domingo',
-                        date: '19 de agosto',
-                        title: 'Title',
-                        info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sed massa ut nunc vulputate posuere a ac ante. Curabitur lacus quam, convallis eget ante vulputate, dignissim sodales elit.',
-                      ),
-                    ],
                   ),
-                ),
-              )
-            ],
+                  SizedBox(height: getAvailableHeight(0.014)),
+                  SizedBox(
+                    height: getAvailableHeight(0.044),
+                    child: CupertinoSearchTextField(
+                      controller: textController,
+                      placeholder: 'Buscar',
+                      onChanged: (searchTerm){
+                        if(searchTerm.isNotEmpty){
+                          ctx.read<DiaryCubit>().searchEntry(searchTerm);
+                        }else{
+                          ctx.read<DiaryCubit>().readAllEntries();
+                        }
+                      },
+                    ),
+                  ),
+                  if(state.entries.isNotEmpty&&state.searching)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: CupertinoActivityIndicator(),
+                  ),
+                  SizedBox(height: getAvailableHeight(0.016)),
+                  Expanded(
+                    child: state.entries.isNotEmpty
+                    ?SingleChildScrollView(
+                      child: Column(
+                        children: state.entries.map((Entry entry)=> DiaryCard(entry: entry)).toList()
+                      ),
+                    )
+                    :Column(
+                      children: [
+                        const Spacer(flex: 3),
+                        Center(child: Column(
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                ctx.read<EntryCubit>().checkTablesExist();
+                              },
+                              child: Image.asset('assets/icons/icon_ia.PNG',height: 80)
+                            ),
+                            const SizedBox(height: 20),
+                            Text('Registra tus momentos.',style: h2Style.copyWith(fontSize: 20)),
+                            const SizedBox(height: 10),
+                            Text("Toca el boton '+' para crear momentos",
+                              style: h5HintStyle.copyWith(fontWeight: FontWeight.w300,color: const Color(0xff878589))
+                            )
+                          ],
+                        )),
+                        const Spacer(flex: 4),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        onPressed: (){
-          context.read<EntryCubit>().setDateTime(DateTime.now());
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const EntryScreen()),
-          );
-        },
-        elevation: 10,
-        child: Icon(Icons.add,
-          size: 30,
-          color: kPrimaryColor
-        ),
-      ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.white,
+            onPressed: (){
+              ctx.read<EntryCubit>().setDateTime(DateTime.now());
+              Navigator.of(ctx).push(
+                MaterialPageRoute(builder: (_) => const EntryScreen()),
+              );
+            },
+            elevation: 10,
+            child: Icon(Icons.add,
+              size: 30,
+              color: kPrimaryColor
+            ),
+          ),
+        );
+      },
     );
   }
 }

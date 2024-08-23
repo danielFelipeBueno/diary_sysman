@@ -1,7 +1,8 @@
-// ignore_for_file: avoid_renaming_method_parameters
+// ignore_for_file: avoid_renaming_method_parameters, use_build_context_synchronously
 
 import 'dart:io';
 
+import 'package:diary_sysman/ui/diary/cubit/diary_cubit.dart';
 import 'package:diary_sysman/ui/entry/cubit/entry_cubit.dart';
 import 'package:diary_sysman/ui/styles.dart';
 import 'package:diary_sysman/utils/size_config.dart';
@@ -49,38 +50,54 @@ class _EntryScreenState extends State<EntryScreen> {
             flexibleSpace: SafeArea(
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: getAvailableWidth(0.038)),
-                child: Row(
+                child: Stack(
                   children: [
-                    SizedBox(
-                      width: 52,
-                      child: IconButton(
-                        onPressed: ()=>Navigator.pop(ctx),
-                        icon: const Icon(CupertinoIcons.clear, size: 36,)
-                      ),
-                    ),
-                    const Spacer(),
-                    CupertinoButton(
-                      onPressed: (){
-                        showDialogDatePicker(
-                        CupertinoDatePicker(
-                          initialDateTime: DateTime.now(),
-                          mode: CupertinoDatePickerMode.date,
-                          use24hFormat: true,
-                          showDayOfWeek: true,
-                          onDateTimeChanged: (DateTime newDate) {
-                            setState(() => ctx.read<EntryCubit>().setDateTime(newDate));
-                          },
-                          //   ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 52,
+                          child: IconButton(
+                            onPressed: ()=>Navigator.pop(ctx),
+                            icon: const Icon(CupertinoIcons.clear, size: 36,)
                           ),
-                        );
-                      },
-                      child: Text(
-                        state.dateTime!=null?DateFormat('EEEE, d \'de\' MMMM', 'es_ES').format(state.dateTime!):'',
-                        style: h5Style
-                      ),
+                        ),
+                        if(state.finishedTitle&&state.descriptionController.text.isNotEmpty)
+                        CupertinoButton(
+                          child: const Text('Terminar'),
+                          onPressed: ()async{
+                            int result = await ctx.read<EntryCubit>().createEntry();
+                            ctx.read<DiaryCubit>().readAllEntries();
+                            print('================== RESULT: $result ==================');
+                            Navigator.pop(ctx);
+                          }
+                        )
+                      ],
                     ),
-                    const Spacer(),
-                    const SizedBox(width:52)
+                    Positioned.fill(
+                      child: Center(
+                        child: CupertinoButton(
+                          onPressed: (){
+                            showDialogDatePicker(
+                            CupertinoDatePicker(
+                              initialDateTime: DateTime.now(),
+                              mode: CupertinoDatePickerMode.date,
+                              use24hFormat: true,
+                              showDayOfWeek: true,
+                              onDateTimeChanged: (DateTime newDate) {
+                                setState(() => ctx.read<EntryCubit>().setDateTime(newDate));
+                              },
+                              //   ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            state.dateTime!=null?DateFormat('EEEE, d \'de\' MMMM', 'es_ES').format(state.dateTime!):'',
+                            style: h5Style
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),

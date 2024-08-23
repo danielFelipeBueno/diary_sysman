@@ -1,3 +1,4 @@
+import 'package:diary_sysman/data/database/database_helper.dart';
 import 'package:diary_sysman/data/diary_repository.dart';
 import 'package:diary_sysman/data/prod/diary_impl.dart';
 import 'package:diary_sysman/ui/diary/cubit/diary_cubit.dart';
@@ -10,6 +11,8 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main()async {
   await initializeDateFormatting('es_ES', null);
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.instance.initDatabase();
   runApp(const MyApp());
 }
 
